@@ -39,6 +39,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aspects</artifactId>
             </dependency>
+            <!--alibaba json-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.32</version>
+            </dependency>
         </dependencies>
 
     <build>
