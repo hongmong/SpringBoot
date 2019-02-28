@@ -1,0 +1,172 @@
+stages:
+#开发阶段
+  - build_dev
+  - deploy_dev
+  - create_b_tag
+#测试阶段
+  - build_test
+  - deploy_test
+  - create_stg
+#预发布阶段
+  - create_s_tag
+  - bulid_preles
+  - deploy_preles
+  - create_r_tag
+#上线阶段
+  - bulid_pro
+  - deploy_pro
+#定义全局环境变量
+variables:
+  local_repository_dir: "/data/gitlab-runner"
+  object_dir: "$local_repository_dir/$CI_PROJECT_NAME"
+  git_path: "git@10.0.1.25:$CI_PROJECT_PATH.git"
+  IMAGE_NAME: "10.0.1.34:5000/bdh/bdh_dev"
+  TEST_IMAGE_NAME: "10.0.1.34:5000/bdh/bdh_ceshi"
+  PRO_IMAGE_NAME: "10.0.1.34:5000/bdh/bdh_pro"
+  CONTAINER_NAME: "bdh_dev"
+  TEST_CONTAINER_NAME: "bdh_ceshi"
+  PRO_CONTAINER_NAME: "bdh_pro"
+#################################开发阶段############################
+#开发环境构建
+build:dev:
+  stage: build_dev
+  script:
+    - mvn clean install -Dmaven.test.skip=true -P dev
+    - docker build -t $IMAGE_NAME:$CI_PIPELINE_ID ./target/
+    - docker push $IMAGE_NAME:$CI_PIPELINE_ID
+    - docker rmi $IMAGE_NAME:$CI_PIPELINE_ID
+  only:
+    - /^dev.*$/
+  except:
+    - master
+  tags:
+    - 10.0.1.34_build
+#开发环境部署
+deploy:dev:
+  stage: deploy_dev
+  script:
+    - docker stop $CONTAINER_NAME;docker rm $CONTAINER_NAME
+    - docker pull $IMAGE_NAME:$CI_PIPELINE_ID
+    - docker run -d -p 8081:8081 -v /data/logs:/data/logs --name $CONTAINER_NAME $IMAGE_NAME:$CI_PIPELINE_ID
+  tags:
+    - 10.0.1.26_dev
+  only:
+    - /^dev.*$/
+  except:
+    - master
+  when: manual
+#创建b_tag
+create:b_tag:
+  stage: create_b_tag
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - source /data/scripts/creat_tag.sh
+    - create_btag
+    - echo $CI_PROJECT_NAME $CI_PROJECT_PATH $CI_COMMIT_SHA $CI_COMMIT_REF_NAME
+  tags:
+    - 10.0.1.34_test
+  only:
+    - /^dev_.*$/
+  when: manual
+############################测试阶段#############################
+#测试环境构建
+#build:ceshi: 
+#  stage: build_test
+#  script:
+#    - mvn clean install -Dmaven.test.skip=true -P ceshi
+#    - docker build -t $TEST_IMAGE_NAME:$CI_PIPELINE_ID ./target/
+#    - docker push $TEST_IMAGE_NAME:$CI_PIPELINE_ID
+#    - docker rmi $TEST_IMAGE_NAME:$CI_PIPELINE_ID
+#  only:
+#    - /^b.*$/
+#  tags:
+#    - 10.0.1.34_build
+#测试环境部署
+#deploy:ceshi:
+#  stage: deploy_test
+#  script:
+#    - docker stop $TEST_CONTAINER_NAME;docker rm $TEST_CONTAINER_NAME
+#    - docker pull $TEST_IMAGE_NAME:$CI_PIPELINE_ID
+#    - docker run -d -p 8081:8081 -v /data/logs:/data/logs --name $TEST_CONTAINER_NAME $TEST_IMAGE_NAME:$CI_PIPELINE_ID
+#  tags:
+#    - 10.0.1.28_ceshi
+#  only:
+#    - /^b.*$/
+#  when: manual
+#创建stg分支
+create:stg:
+  stage: create_stg
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - source /data/scripts/creat_tag.sh
+    - create_stg
+    - echo $CI_PROJECT_NAME $CI_PROJECT_PATH $CI_COMMIT_SHA $CI_COMMIT_REF_NAME
+  tags:
+    - 10.0.1.34_test
+  only:
+    - /^b_.*$/
+  when: manual
+##########################创建s_tag############################
+#创建s_tag
+create:s_tag:
+  stage: create_s_tag
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - source /data/scripts/creat_tag.sh
+    - create_stag
+    - echo $CI_PROJECT_NAME $CI_PROJECT_PATH $CI_COMMIT_SHA $CI_COMMIT_REF_NAME
+  tags:
+    - 10.0.1.34_test
+  only:
+    - /^stg_.*$/
+  when: manual
+###########################预发布阶段#########################
+#预发布构建
+#预发布部署
+#创建r_tag
+create:r_tag:
+  stage: create_r_tag
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - source /data/scripts/creat_tag.sh
+    - create_rtag
+    - echo $CI_PROJECT_NAME $CI_PROJECT_PATH $CI_COMMIT_SHA $CI_COMMIT_REF_NAME
+  tags:
+    - 10.0.1.34_test
+  only:
+    - /^s_.*$/
+  when: manual
+###########################上线阶段###########################
+#线上环境构建
+build:pro: 
+  stage: bulid_pro
+  script:
+    - mvn clean install -Dmaven.test.skip=true -P prod
+    - docker build -t $PRO_IMAGE_NAME:$CI_PIPELINE_ID ./target/
+    - docker push $PRO_IMAGE_NAME:$CI_PIPELINE_ID
+    - docker rmi $PRO_IMAGE_NAME:$CI_PIPELINE_ID
+  only:
+    - /^r.*$/
+  except:
+    - /^dev.*$/
+    - master
+  tags:
+    - 10.0.1.34_build
+#部署上线
+deploy:pro:
+  stage: deploy_pro
+  script:
+    - docker stop $PRO_CONTAINER_NAME;docker rm $PRO_CONTAINER_NAME
+    - docker pull $PRO_IMAGE_NAME:$CI_PIPELINE_ID
+    - docker run -d -p 8081:8081 -v /data/logs:/data/logs --name $PRO_CONTAINER_NAME $PRO_IMAGE_NAME:$CI_PIPELINE_ID
+  tags:
+    - 10.0.1.28_ceshi
+  only:
+    - /^r.*$/
+  except:
+    - /^dev.*$/
+  when: manual

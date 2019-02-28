@@ -1,0 +1,26 @@
+#test.user.name=刘洪明
+#test.user.age=22
+#spring.data.elasticsearch.cluster-name=elasticsearch
+#spring.data.elasticsearch.cluster-nodes=10.0.1.13:9200
+#elasticsearch.ip=10.0.1.13
+#elasticsearch.port=9300
+#elasticsearch.cluster.name=elasticsearch
+#elasticsearch.pool=10
+#jdbc.datasource.url=jdbc:mysql://10.0.1.9:8066/farmfriend?useUnicode=true&characterEncoding=utf8&useSSL=false
+#jdbc.datasource.username=work
+#jdbc.datasource.password=srcRwk8WNcZemaSKflE9
+
+
+#服务端口
+server:
+    port: 8080
+
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://10.0.1.113:3306/payment?useUnicode=true&characterEncoding=utf8&useSSL=false
+        username: payment
+        password: Xjk0QH6T95EnT8sq
+logging:
+    level:
+        root: info
