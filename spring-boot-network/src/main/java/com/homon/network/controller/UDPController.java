@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Company : 北京华宇元典信息服务有限公司 <br>
  * Description :
  *
  * @author Homon
