@@ -24,7 +24,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2021/12/25 13:58
  */
-@Configuration
+//@Configuration
 public class UDPServerApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(UDPServerApplication.class);
