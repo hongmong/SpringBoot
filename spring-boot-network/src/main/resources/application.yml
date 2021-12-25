@@ -1,0 +1,4 @@
+server:
+  port: 8888
+udp:
+  port: 8889

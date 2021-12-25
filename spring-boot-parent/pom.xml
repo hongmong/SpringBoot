@@ -3,6 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.12.RELEASE</version>
+    </parent>
+
     <groupId>com.homon.spring-boot</groupId>
     <artifactId>spring-boot-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -10,23 +16,16 @@
     <name>spring-boot-parent</name>
 
     <properties>
-
+        <fastjson.version>1.2.79</fastjson.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>1.5.2.RELEASE</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
             <!--alibaba json-->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.32</version>
+                <version>${fastjson.version}</version>
             </dependency>
             <!--连接池-->
             <dependency>
@@ -55,25 +54,25 @@
     </dependencyManagement>
 
     <!--定义自定义maven仓库地址-->
-    <repositories>
-        <repository>
-            <id>3rd party</id>
-            <name>Team Nexus Repository</name>
-            <url>http://10.0.1.4:8081/nexus/content/repositories/thirdparty</url>
-        </repository>
-        <repository>
-            <id>snapshots</id>
-            <name>Team Nexus Repository</name>
-            <url>http://10.0.1.4:8081/nexus/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>3rd party</id>-->
+<!--            <name>Team Nexus Repository</name>-->
+<!--            <url>http://10.0.1.4:8081/nexus/content/repositories/thirdparty</url>-->
+<!--        </repository>-->
+<!--        <repository>-->
+<!--            <id>snapshots</id>-->
+<!--            <name>Team Nexus Repository</name>-->
+<!--            <url>http://10.0.1.4:8081/nexus/content/repositories/snapshots</url>-->
+<!--        </repository>-->
+<!--    </repositories>-->
     <!--parent deploy 地址-->
-    <distributionManagement>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>http://10.0.1.4:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <snapshotRepository>-->
+<!--            <id>snapshots</id>-->
+<!--            <url>http://10.0.1.4:8081/nexus/content/repositories/snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
     <!--定义环境变量，便于切换环境-->
     <profiles>
